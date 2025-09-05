@@ -16,11 +16,8 @@ preview_bucket_name = "vertex-cnc-files-dev"
 
 [vars]
 ENVIRONMENT = "production"
-# API ve servis anahtarları
-SENDGRID_API_KEY = ""
-API_KEY = "vertex-api-key-123456"
-ADMIN_API_KEY = "vertex-admin-key-789012"
-NPM_TOKEN = "YOUR_NPM_TOKEN" # Gerçek token deployment sırasında eklenmelidir
+# API ve servis anahtarları - Değerler .dev.vars'dan ve çevre değişkenlerinden alınır
+# Güvenlik için API anahtarları ve tokenlar .dev.vars dosyasından alınacaktır
 
 # Custom domain yönlendirmesi için bu bölümü ekleyebilirsiniz
 # [[routes]]
