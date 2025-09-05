@@ -30,7 +30,7 @@ VERTEX CNC projesi şu anda aşağıdaki bileşenlerle yapılandırılmıştır:
 
 ### 5. Email Entegrasyonu
 - **Servis**: SendGrid
-- **API Key**: 4VR37VJ8PYTSR69KZFUJ8YRF
+- **API Key**: [GIZLI]
 - **Gönderici**: teklifler@vertexcnc.tr
 - **Alıcı**: destek@vertexcnc.tr
 
