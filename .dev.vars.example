@@ -1,0 +1,28 @@
+# Cloudflare Worker Development Environment Variables
+# Copy this file to .dev.vars and update with your actual values
+
+# API Keys
+SENDGRID_API_KEY=your_sendgrid_api_key_here
+API_KEY=vertex-api-key-123456
+ADMIN_API_KEY=vertex-admin-key-789012
+
+# Cloudflare API Token (for advanced features)
+CLOUDFLARE_API_TOKEN=your_cloudflare_api_token_here
+
+# Environment
+ENVIRONMENT=development
+
+# KV Store IDs (will be updated after creation)
+ORDERS_DB_ID=your_orders_db_kv_id
+TRACKING_DB_ID=your_tracking_db_kv_id
+
+# R2 Bucket names
+FILE_BUCKET_NAME=vertex-cnc-files-dev
+
+# Email settings
+FROM_EMAIL=teklifler@vertexcnc.tr
+SUPPORT_EMAIL=destek@vertexcnc.tr
+
+# Domain settings
+PRODUCTION_DOMAIN=vertexcnc.tr
+DEV_DOMAIN=localhost:5173

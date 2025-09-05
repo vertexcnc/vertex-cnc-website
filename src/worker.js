@@ -207,9 +207,13 @@ async function handleQuoteRequest(request, env, corsHeaders) {
       ]
     };
     
-    // Save to KV storage
-    await env.ORDERS_DB.put(trackingId, JSON.stringify(order));
-    await env.TRACKING_DB.put(orderNumber, trackingId);
+    // Save to KV storage (simulated for development)
+    if (env.ORDERS_DB) {
+      await env.ORDERS_DB.put(trackingId, JSON.stringify(order));
+    }
+    if (env.TRACKING_DB) {
+      await env.TRACKING_DB.put(orderNumber, trackingId);
+    }
     
     // Send confirmation email (implement with your email service)
     await sendConfirmationEmail(data, orderNumber, trackingId, env);
@@ -239,9 +243,61 @@ async function handleQuoteRequest(request, env, corsHeaders) {
 // Order Tracking Handler
 async function getOrderStatus(trackingId, env, corsHeaders) {
   try {
-    const orderData = await env.ORDERS_DB.get(trackingId);
+    let orderData = null;
+    
+    // KV'den veri almaya çalış
+    if (env.ORDERS_DB) {
+      orderData = await env.ORDERS_DB.get(trackingId);
+    }
     
     if (!orderData) {
+      // Development için mock data
+      if (env.ENVIRONMENT === 'development' || !env.ORDERS_DB) {
+        const mockOrder = {
+          orderNumber: 'ORD-2024-0001',
+          trackingId: trackingId,
+          status: 'Teklif Hazırlanıyor',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          stages: [
+            {
+              stage: 'Teklif Alındı',
+              status: 'completed',
+              timestamp: new Date().toISOString(),
+              description: 'Teklif talebiniz başarıyla alındı'
+            },
+            {
+              stage: 'Teknik İnceleme',
+              status: 'pending',
+              timestamp: null,
+              description: 'Teknik ekibimiz tarafından inceleniyor'
+            }
+          ],
+          customerData: {
+            name: 'Demo Müşteri',
+            company: 'Demo Şirket'
+          }
+        };
+        
+        return new Response(JSON.stringify({
+          success: true,
+          order: {
+            orderNumber: mockOrder.orderNumber,
+            trackingId: mockOrder.trackingId,
+            status: mockOrder.status,
+            createdAt: mockOrder.createdAt,
+            updatedAt: mockOrder.updatedAt,
+            stages: mockOrder.stages,
+            customerInfo: {
+              name: mockOrder.customerData.name,
+              company: mockOrder.customerData.company
+            }
+          }
+        }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+      
       return new Response(JSON.stringify({ 
         error: 'Order not found',
         message: 'Belirtilen takip numarası bulunamadı'
@@ -349,6 +405,11 @@ function generateTrackingId() {
 }
 
 async function generateOrderNumber(env) {
+  if (!env.ORDERS_DB) {
+    // Development için basit counter
+    return `ORD-${new Date().getFullYear()}-${Date.now().toString().slice(-4).padStart(4, '0')}`;
+  }
+  
   const currentCount = await env.ORDERS_DB.get('order_counter') || '0';
   const newCount = parseInt(currentCount) + 1;
   await env.ORDERS_DB.put('order_counter', newCount.toString());
@@ -443,6 +504,26 @@ async function updateOrderStatus(trackingId, status, stageUpdate, env) {
 }
 
 async function getAllOrders(env) {
+  if (!env.ORDERS_DB) {
+    // Development için mock data
+    return {
+      orders: [
+        {
+          orderNumber: 'ORD-2024-0001',
+          trackingId: 'VTX-DEV-001',
+          status: 'Teklif Hazırlanıyor',
+          createdAt: new Date().toISOString(),
+          customerData: {
+            name: 'Demo Müşteri',
+            company: 'Demo Şirket',
+            email: 'demo@example.com'
+          }
+        }
+      ],
+      total: 1
+    };
+  }
+  
   // This is a simplified version - in production you'd want pagination
   const ordersList = await env.ORDERS_DB.list();
   const orders = [];

@@ -2,11 +2,11 @@
 const API_CONFIG = {
   development: {
     baseURL: 'http://localhost:5000',
-    workerURL: 'http://localhost:8787'
+    workerURL: 'http://localhost:8788'
   },
   production: {
-    baseURL: import.meta.env.VITE_API_URL || 'https://vertexcnc.tr/api',
-    workerURL: import.meta.env.VITE_API_URL || 'https://vertexcnc.tr/api'
+    baseURL: import.meta.env.VITE_API_URL || 'https://vertex-cnc-api.vertexcnc-tr.workers.dev',
+    workerURL: import.meta.env.VITE_API_URL || 'https://vertex-cnc-api.vertexcnc-tr.workers.dev'
   }
 };
 

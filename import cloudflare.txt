@@ -1,2 +1,0 @@
-import CloudFlare
-cf = CloudFlare.CloudFlare(token=token)

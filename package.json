@@ -1,5 +1,5 @@
 {
-  "name": "alex-martinez-portfolio",
+  "name": "vertex-cnc-website",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -8,11 +8,10 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "deploy": "pnpm build && npx wrangler deploy src/worker.js --name vertex-cnc-production",
-    "deploy:pages": "pnpm build",
-    "deploy:worker": "npx wrangler deploy src/worker.js --name vertex-cnc-production",
-    "dev:worker": "npx wrangler dev src/worker.js --local",
-    "kv:create": "npx wrangler kv:namespace create ORDERS_DB && npx wrangler kv:namespace create TRACKING_DB"
+    "worker:dev": "npx wrangler dev src/worker.js --local --port 8788",
+    "worker:deploy": "npx wrangler deploy",
+    "test:api": "node scripts/test-api.js",
+    "test:production": "node scripts/production-test.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
@@ -87,9 +86,9 @@
     "wrangler": "^4.33.2"
   },
   "packageManager": "pnpm@10.4.1+sha512.c753b6c3ad7afa13af388fa6d808035a008e30ea9993f58c6663e2bc5ff21679aa834db094987129aa4d488b86df57f7b634981b2f827cdcacc698cc0cfb88af",
-  "description": "## 🎯 Proje Hedefi VERTEX CNC web sitesini Cloudflare ile yayına alarak, müşterilerinin sipariş takip edebilmelerini sağlayan tam işlevsel bir sistem oluşturmak.",
-  "main": "eslint.config.js",
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "description": "VERTEX CNC - Modern CNC İşleme Hizmetleri. Cloudflare ile tam entegre sipariş takip ve teklif sistemi.",
+  "main": "src/main.jsx",
+  "keywords": ["cnc", "machining", "vertex", "cloudflare", "manufacturing"],
+  "author": "VERTEX CNC",
+  "license": "MIT"
 }
