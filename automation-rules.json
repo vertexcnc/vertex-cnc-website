@@ -1,0 +1,341 @@
+{
+  "automation_rules": {
+    "version": "1.0.0",
+    "created": "2025-09-03",
+    "description": "VERTEX CNC için tetikleme tabanlı e-posta otomasyon kuralları",
+    
+    "triggers": {
+      "quote_request_submitted": {
+        "name": "Teklif Talebi Gönderildi",
+        "description": "Müşteri teklif formu gönderdiğinde tetiklenir",
+        "conditions": [
+          "form.isValid === true",
+          "form.requiredFields.completed === true",
+          "form.email.isValid === true"
+        ],
+        "immediate_actions": [
+          "generate_order_number",
+          "create_tracking_id",
+          "save_to_database"
+        ],
+        "delayed_actions": [
+          {
+            "delay": "0 minutes",
+            "action": "send_customer_confirmation"
+          },
+          {
+            "delay": "2 minutes", 
+            "action": "generate_pdf_quote"
+          },
+          {
+            "delay": "5 minutes",
+            "action": "notify_support_team"
+          }
+        ]
+      },
+
+      "cad_file_uploaded": {
+        "name": "CAD Dosyası Yüklendi",
+        "description": "Müşteri CAD dosyası yüklediğinde tetiklenir",
+        "conditions": [
+          "file.size <= 50MB",
+          "file.type in ['dwg', 'dxf', 'step', 'iges', 'pdf']",
+          "file.upload.success === true"
+        ],
+        "immediate_actions": [
+          "virus_scan",
+          "file_validation",
+          "backup_to_cloud"
+        ],
+        "delayed_actions": [
+          {
+            "delay": "1 minute",
+            "action": "start_cad_analysis"
+          },
+          {
+            "delay": "10 minutes",
+            "action": "notify_engineering_team"
+          }
+        ]
+      },
+
+      "order_status_changed": {
+        "name": "Sipariş Durumu Değişti",
+        "description": "Sipariş durumu güncellendiğinde tetiklenir",
+        "conditions": [
+          "order.status !== order.previousStatus",
+          "order.customer.email.isValid === true",
+          "order.trackingId.exists === true"
+        ],
+        "immediate_actions": [
+          "log_status_change",
+          "update_tracking_system"
+        ],
+        "delayed_actions": [
+          {
+            "delay": "5 minutes",
+            "action": "send_status_update_email"
+          },
+          {
+            "delay": "30 minutes",
+            "action": "update_estimated_delivery"
+          }
+        ]
+      },
+
+      "delivery_approaching": {
+        "name": "Teslimat Yaklaşıyor",
+        "description": "Teslimat tarihine 2 gün kaldığında tetiklenir",
+        "conditions": [
+          "order.deliveryDate - today <= 2 days",
+          "order.status === 'quality_control' || order.status === 'packaging'",
+          "order.customer.notifications.enabled === true"
+        ],
+        "immediate_actions": [
+          "prepare_shipping_info",
+          "generate_tracking_number"
+        ],
+        "delayed_actions": [
+          {
+            "delay": "0 minutes",
+            "action": "send_delivery_reminder"
+          },
+          {
+            "delay": "1 day",
+            "action": "send_shipping_notification"
+          }
+        ]
+      },
+
+      "quality_control_completed": {
+        "name": "Kalite Kontrol Tamamlandı",
+        "description": "Kalite kontrol aşaması tamamlandığında tetiklenir",
+        "conditions": [
+          "order.status === 'quality_control'",
+          "quality.measurements.completed === true",
+          "quality.certificate.generated === true"
+        ],
+        "immediate_actions": [
+          "update_order_status",
+          "prepare_quality_report"
+        ],
+        "delayed_actions": [
+          {
+            "delay": "10 minutes",
+            "action": "send_quality_report_email"
+          },
+          {
+            "delay": "1 hour",
+            "action": "schedule_packaging"
+          }
+        ]
+      },
+
+      "payment_received": {
+        "name": "Ödeme Alındı",
+        "description": "Müşteri ödemesi alındığında tetiklenir",
+        "conditions": [
+          "payment.status === 'completed'",
+          "payment.amount >= order.totalAmount",
+          "payment.verification === 'success'"
+        ],
+        "immediate_actions": [
+          "update_payment_status",
+          "release_production_hold"
+        ],
+        "delayed_actions": [
+          {
+            "delay": "5 minutes",
+            "action": "send_payment_confirmation"
+          },
+          {
+            "delay": "30 minutes",
+            "action": "start_production_process"
+          }
+        ]
+      },
+
+      "production_milestone_reached": {
+        "name": "Üretim Kilometre Taşı",
+        "description": "Üretim sürecinde önemli aşamalar tamamlandığında tetiklenir",
+        "conditions": [
+          "production.milestone in ['25%', '50%', '75%', '100%']",
+          "production.quality.approved === true",
+          "order.customer.updates.enabled === true"
+        ],
+        "immediate_actions": [
+          "update_progress_tracking",
+          "capture_progress_photos"
+        ],
+        "delayed_actions": [
+          {
+            "delay": "15 minutes",
+            "action": "send_progress_update"
+          }
+        ]
+      },
+
+      "urgent_order_received": {
+        "name": "Acil Sipariş Alındı",
+        "description": "Acil öncelikli sipariş geldiğinde tetiklenir",
+        "conditions": [
+          "order.priority === 'urgent' || order.priority === 'emergency'",
+          "order.deliveryDate - today <= 7 days",
+          "order.value >= 10000"
+        ],
+        "immediate_actions": [
+          "escalate_to_management",
+          "check_production_capacity"
+        ],
+        "delayed_actions": [
+          {
+            "delay": "0 minutes",
+            "action": "notify_urgent_team"
+          },
+          {
+            "delay": "30 minutes",
+            "action": "schedule_urgent_meeting"
+          }
+        ]
+      }
+    },
+
+    "email_templates": {
+      "customer_confirmation": {
+        "subject": "Teklif Talebiniz Alındı - {{orderNumber}}",
+        "template": "customer_confirmation.html",
+        "variables": ["customerName", "orderNumber", "trackingUrl", "estimatedResponse"]
+      },
+      
+      "support_notification": {
+        "subject": "Yeni Teklif Talebi - {{orderNumber}} - {{customerCompany}}",
+        "template": "support_notification.html", 
+        "variables": ["orderNumber", "customerName", "customerCompany", "projectDescription", "urgency"]
+      },
+
+      "status_update": {
+        "subject": "Sipariş Durumu Güncellendi - {{orderNumber}}",
+        "template": "status_update.html",
+        "variables": ["customerName", "orderNumber", "newStatus", "estimatedCompletion", "trackingUrl"]
+      },
+
+      "delivery_reminder": {
+        "subject": "Siparişiniz Yakında Teslim Edilecek - {{orderNumber}}",
+        "template": "delivery_reminder.html",
+        "variables": ["customerName", "orderNumber", "deliveryDate", "shippingAddress", "trackingNumber"]
+      },
+
+      "quality_report": {
+        "subject": "Kalite Kontrol Raporu - {{orderNumber}}",
+        "template": "quality_report.html",
+        "variables": ["customerName", "orderNumber", "qualityScore", "measurements", "certificate"]
+      },
+
+      "payment_confirmation": {
+        "subject": "Ödemeniz Alındı - {{orderNumber}}",
+        "template": "payment_confirmation.html",
+        "variables": ["customerName", "orderNumber", "paymentAmount", "paymentMethod", "receiptNumber"]
+      },
+
+      "progress_update": {
+        "subject": "Üretim İlerlemesi - {{orderNumber}} (%{{progressPercentage}})",
+        "template": "progress_update.html",
+        "variables": ["customerName", "orderNumber", "progressPercentage", "currentStage", "nextMilestone"]
+      },
+
+      "urgent_notification": {
+        "subject": "ACİL: Yeni Acil Sipariş - {{orderNumber}}",
+        "template": "urgent_notification.html",
+        "variables": ["orderNumber", "customerName", "urgencyLevel", "deliveryDate", "specialRequirements"]
+      }
+    },
+
+    "workflow_sequences": {
+      "complete_order_flow": {
+        "name": "Tam Sipariş Süreci",
+        "description": "Teklif talebinden teslimat sonrasına kadar tam süreç",
+        "steps": [
+          {
+            "step": 1,
+            "trigger": "quote_request_submitted",
+            "expected_duration": "0-30 minutes"
+          },
+          {
+            "step": 2,
+            "trigger": "cad_file_uploaded",
+            "expected_duration": "0-60 minutes"
+          },
+          {
+            "step": 3,
+            "trigger": "payment_received",
+            "expected_duration": "1-7 days"
+          },
+          {
+            "step": 4,
+            "trigger": "production_milestone_reached",
+            "expected_duration": "1-14 days"
+          },
+          {
+            "step": 5,
+            "trigger": "quality_control_completed",
+            "expected_duration": "1-2 days"
+          },
+          {
+            "step": 6,
+            "trigger": "delivery_approaching",
+            "expected_duration": "1-3 days"
+          }
+        ]
+      }
+    },
+
+    "escalation_rules": {
+      "no_response_24h": {
+        "condition": "customer.lastResponse > 24 hours && order.status === 'waiting_approval'",
+        "action": "send_follow_up_email",
+        "escalation_level": 1
+      },
+      
+      "no_response_72h": {
+        "condition": "customer.lastResponse > 72 hours && order.status === 'waiting_approval'",
+        "action": "call_customer_directly",
+        "escalation_level": 2
+      },
+
+      "production_delay": {
+        "condition": "production.actualDuration > production.estimatedDuration * 1.5",
+        "action": "notify_management_and_customer",
+        "escalation_level": 3
+      },
+
+      "quality_issue": {
+        "condition": "quality.score < 95 || quality.rework === true",
+        "action": "stop_production_notify_engineering",
+        "escalation_level": 4
+      }
+    },
+
+    "monitoring_metrics": {
+      "email_delivery_rate": {
+        "target": "> 99%",
+        "alert_threshold": "< 95%"
+      },
+      
+      "response_time": {
+        "target": "< 5 minutes",
+        "alert_threshold": "> 15 minutes"
+      },
+
+      "automation_success_rate": {
+        "target": "> 98%",
+        "alert_threshold": "< 90%"
+      },
+
+      "customer_satisfaction": {
+        "target": "> 95%",
+        "alert_threshold": "< 85%"
+      }
+    }
+  }
+}
+

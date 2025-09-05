@@ -1,0 +1,89 @@
+{
+  "project": {
+    "name": "VERTEX CNC Web Sitesi",
+    "domain": "vertexcnc.tr",
+    "hosting": "Natro.com",
+    "version": "1.0.0",
+    "build_date": "2025-09-03"
+  },
+  "frontend": {
+    "framework": "React + Vite",
+    "build_dir": "dist/",
+    "assets": [
+      "index.html",
+      "assets/index-CzfmcnrV.js",
+      "assets/index-tpd-AJIb.css",
+      "assets/vertex-logo-new-CxXHVGtb.png",
+      "assets/cnc-*.webp",
+      "assets/cnc-*.jpg"
+    ],
+    "size": "1.1 MB total"
+  },
+  "backend": {
+    "framework": "Flask (Python)",
+    "api_endpoints": [
+      "/api/send-quote-email",
+      "/api/track-order/<tracking_id>",
+      "/api/health"
+    ],
+    "dependencies": [
+      "flask",
+      "flask-cors", 
+      "reportlab",
+      "uuid",
+      "datetime",
+      "json"
+    ]
+  },
+  "features": {
+    "cad_file_upload": true,
+    "pdf_generation": true,
+    "email_automation": true,
+    "order_tracking": true,
+    "responsive_design": true,
+    "turkish_language": true
+  },
+  "email_system": {
+    "target": "destek@vertexcnc.tr",
+    "pdf_attachments": true,
+    "cad_file_attachments": true,
+    "auto_order_numbers": true,
+    "turkish_templates": true
+  },
+  "manus_integration": {
+    "mail_automation": true,
+    "trigger_based_workflows": true,
+    "ai_email_processing": true,
+    "real_time_monitoring": true
+  },
+  "deployment": {
+    "hosting_provider": "Natro.com",
+    "domain": "vertexcnc.tr",
+    "ssl_required": true,
+    "backup_strategy": "daily",
+    "monitoring": "uptime + performance"
+  },
+  "automation_triggers": [
+    {
+      "event": "quote_request_received",
+      "action": "generate_pdf_and_send_email",
+      "target": "customer + support_team"
+    },
+    {
+      "event": "order_status_changed", 
+      "action": "send_notification_email",
+      "target": "customer"
+    },
+    {
+      "event": "cad_file_uploaded",
+      "action": "start_analysis_workflow",
+      "target": "engineering_team"
+    },
+    {
+      "event": "delivery_approaching",
+      "action": "send_reminder_email",
+      "target": "customer"
+    }
+  ]
+}
+

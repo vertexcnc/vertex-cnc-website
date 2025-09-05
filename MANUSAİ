@@ -1,0 +1,41 @@
+// Mevcut ManusMailIntegration class'ına AI özellikleri ekleyin
+class AIQuoteAgent extends ManusMailIntegration {
+  constructor() {
+    super();
+    this.setupAIModels();
+  }
+  
+  setupAIModels() {
+    console.log("AI modelleri yükleniyor...");
+    // OpenAI veya Cloudflare AI entegrasyonu
+  }
+  
+  async analyzeCADFile(data) {
+    console.log("CAD dosyası AI ile analiz ediliyor...");
+    // Burada Cloudflare AI ile CAD analizi yapın
+    
+    // Basit fiyat tahmin algoritması
+    const complexity = this.estimateComplexity(data);
+    const materialCost = this.calculateMaterialCost(data);
+    const machiningTime = this.estimateMachiningTime(data);
+    
+    return {
+      complexity,
+      materialCost,
+      machiningTime,
+      totalEstimate: machiningTime * 75 + materialCost
+    };
+  }
+  
+  estimateComplexity(data) {
+    // AI model ile karmaşıklık tahmin algoritması
+  }
+  
+  calculateMaterialCost(data) {
+    // Malzeme ve boyut bazlı maliyet hesabı
+  }
+  
+  estimateMachiningTime(data) {
+    // Karmaşıklık ve boyut bazlı işleme süresi tahmini
+  }
+}

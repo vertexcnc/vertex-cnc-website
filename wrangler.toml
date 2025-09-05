@@ -1,0 +1,28 @@
+name = "vertex-cnc-api"
+compatibility_date = "2024-09-05"
+main = "src/worker.js"
+
+kv_namespaces = [
+  { binding = "ORDERS_DB", id = "292d1ab0ae884a1dbd61d903bf86a64f" },
+  { binding = "TRACKING_DB", id = "3e60a149c2394c1cbc9994e57bce31f7" }
+]
+
+# R2 Bucket için yapılandırma
+# Cloudflare R2'de bucket oluşturun ve bilgileri ekleyin
+[[r2_buckets]]
+binding = "FILE_BUCKET"
+bucket_name = "vertex-cnc-files"
+preview_bucket_name = "vertex-cnc-files-dev"
+
+[vars]
+ENVIRONMENT = "production"
+# API ve servis anahtarları
+SENDGRID_API_KEY = ""
+API_KEY = "vertex-api-key-123456"
+ADMIN_API_KEY = "vertex-admin-key-789012"
+NPM_TOKEN = "YOUR_NPM_TOKEN" # Gerçek token deployment sırasında eklenmelidir
+
+# Custom domain yönlendirmesi için bu bölümü ekleyebilirsiniz
+# [[routes]]
+# pattern = "api.vertexcnc.tr/*"
+# zone_id = "<ZONE_ID>"

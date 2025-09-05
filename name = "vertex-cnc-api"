@@ -1,0 +1,8 @@
+name = "vertex-cnc-api"
+type = "javascript"
+workers_dev = true
+
+kv_namespaces = [
+  { binding = "KV", id = "292d1ab0ae884a1dbd61d903bf86a64f
+  " }
+]

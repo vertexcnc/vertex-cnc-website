@@ -1,0 +1,456 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+  /* VERTEX CNC Color Palette */
+  --vertex-orange: #FF6B35;
+  --vertex-orange-light: #FF8A65;
+  --vertex-orange-dark: #E55100;
+  --vertex-grey: #6B7280;
+  --vertex-grey-dark: #374151;
+  --vertex-grey-light: #9CA3AF;
+  --vertex-background: #F9FAFB;
+  --vertex-white: #FFFFFF;
+  --vertex-black: #111827;
+  
+  /* Shadcn/UI Variables with VERTEX colors */
+  --radius: 0.5rem;
+  --background: #F9FAFB;
+  --foreground: #111827;
+  --card: #FFFFFF;
+  --card-foreground: #111827;
+  --popover: #FFFFFF;
+  --popover-foreground: #111827;
+  --primary: #FF6B35;
+  --primary-foreground: #FFFFFF;
+  --secondary: #6B7280;
+  --secondary-foreground: #FFFFFF;
+  --muted: #F3F4F6;
+  --muted-foreground: #6B7280;
+  --accent: #FF8A65;
+  --accent-foreground: #111827;
+  --destructive: #EF4444;
+  --border: #E5E7EB;
+  --input: #F3F4F6;
+  --ring: #FF6B35;
+  --chart-1: #FF6B35;
+  --chart-2: #6B7280;
+  --chart-3: #FF8A65;
+  --chart-4: #374151;
+  --chart-5: #9CA3AF;
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #111827;
+  --sidebar-primary: #FF6B35;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #F3F4F6;
+  --sidebar-accent-foreground: #111827;
+  --sidebar-border: #E5E7EB;
+  --sidebar-ring: #FF6B35;
+}
+
+.dark {
+  --background: #111827;
+  --foreground: #F9FAFB;
+  --card: #1F2937;
+  --card-foreground: #F9FAFB;
+  --popover: #1F2937;
+  --popover-foreground: #F9FAFB;
+  --primary: #FF6B35;
+  --primary-foreground: #FFFFFF;
+  --secondary: #374151;
+  --secondary-foreground: #F9FAFB;
+  --muted: #374151;
+  --muted-foreground: #9CA3AF;
+  --accent: #FF8A65;
+  --accent-foreground: #111827;
+  --destructive: #EF4444;
+  --border: #374151;
+  --input: #374151;
+  --ring: #FF6B35;
+  --chart-1: #FF6B35;
+  --chart-2: #6B7280;
+  --chart-3: #FF8A65;
+  --chart-4: #9CA3AF;
+  --chart-5: #D1D5DB;
+  --sidebar: #1F2937;
+  --sidebar-foreground: #F9FAFB;
+  --sidebar-primary: #FF6B35;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #374151;
+  --sidebar-accent-foreground: #F9FAFB;
+  --sidebar-border: #374151;
+  --sidebar-ring: #FF6B35;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  }
+  
+  .font-mono {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  }
+}
+
+@layer components {
+  /* VERTEX CNC Custom Components */
+  .vertex-gradient {
+    background: linear-gradient(135deg, var(--vertex-orange), var(--vertex-orange-dark));
+  }
+  
+  .vertex-gradient-text {
+    background: linear-gradient(135deg, var(--vertex-orange), var(--vertex-orange-dark));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  
+  .vertex-metallic-gradient {
+    background: linear-gradient(135deg, var(--vertex-grey), var(--vertex-grey-dark));
+  }
+  
+  .vertex-card {
+    @apply bg-card border border-border rounded-lg p-6 shadow-sm;
+    transition: all 0.3s ease;
+  }
+  
+  .vertex-card:hover {
+    @apply shadow-lg;
+    transform: translateY(-2px);
+  }
+  
+  .vertex-button-primary {
+    @apply bg-primary text-primary-foreground px-6 py-3 rounded-lg font-medium;
+    transition: all 0.3s ease;
+  }
+  
+  .vertex-button-primary:hover {
+    @apply brightness-110;
+    transform: translateY(-1px);
+  }
+  
+  .vertex-button-secondary {
+    @apply bg-secondary text-secondary-foreground px-6 py-3 rounded-lg font-medium;
+    transition: all 0.3s ease;
+  }
+  
+  .vertex-button-secondary:hover {
+    @apply brightness-110;
+    transform: translateY(-1px);
+  }
+  
+  .vertex-section {
+    @apply py-16 px-4;
+  }
+  
+  .vertex-container {
+    @apply max-w-7xl mx-auto;
+  }
+  
+  .vertex-hero-
+
+
+title {
+    @apply text-4xl md:text-6xl font-bold mb-6;
+  }
+  
+  .vertex-hero-subtitle {
+    @apply text-lg md:text-xl text-muted-foreground mb-8 max-w-3xl mx-auto;
+  }
+  
+  .vertex-section-title {
+    @apply text-3xl md:text-4xl font-bold text-center mb-4;
+  }
+  
+  .vertex-section-subtitle {
+    @apply text-lg text-muted-foreground text-center mb-12 max-w-2xl mx-auto;
+  }
+  
+  .vertex-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+  
+  .vertex-grid-2 {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-8;
+  }
+  
+  .vertex-grid-4 {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6;
+  }
+  
+  /* Animation Classes */
+  .vertex-fade-in {
+    animation: vertexFadeIn 0.8s ease-out forwards;
+  }
+  
+  .vertex-slide-up {
+    animation: vertexSlideUp 0.8s ease-out forwards;
+  }
+  
+  .vertex-scale-in {
+    animation: vertexScaleIn 0.6s ease-out forwards;
+  }
+  
+  /* Precision Engineering Theme */
+  .precision-grid {
+    background-image: 
+      linear-gradient(rgba(107, 114, 128, 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(107, 114, 128, 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  
+  .metallic-texture {
+    background: linear-gradient(45deg, 
+      rgba(107, 114, 128, 0.1) 25%, 
+      transparent 25%, 
+      transparent 75%, 
+      rgba(107, 114, 128, 0.1) 75%),
+      linear-gradient(45deg, 
+      rgba(107, 114, 128, 0.1) 25%, 
+      transparent 25%, 
+      transparent 75%, 
+      rgba(107, 114, 128, 0.1) 75%);
+    background-size: 4px 4px;
+    background-position: 0 0, 2px 2px;
+  }
+  
+  /* CNC Machine Inspired Elements */
+  .cnc-border {
+    border: 2px solid var(--vertex-grey);
+    border-radius: 2px;
+    position: relative;
+  }
+  
+  .cnc-border::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border: 1px solid var(--vertex-orange);
+    border-radius: 4px;
+    z-index: -1;
+  }
+  
+  /* Service Cards with Metallic Grey Background */
+  .vertex-service-card {
+    background-color: var(--vertex-grey) !important;
+    color: white !important;
+    border: 1px solid var(--vertex-grey-dark);
+  }
+  
+  .vertex-service-card h3 {
+    color: white !important;
+  }
+  
+  .vertex-service-card p {
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+  
+  .vertex-service-card .vertex-service-icon {
+    color: var(--vertex-orange) !important;
+  }
+  
+  .vertex-service-card .vertex-service-badge {
+    background-color: var(--vertex-orange) !important;
+    color: white !important;
+    border: none !important;
+  }
+  
+  /* Responsive Typography */
+  @media (max-width: 768px) {
+    .vertex-hero-title {
+      @apply text-3xl;
+    }
+    
+    .vertex-section-title {
+      @apply text-2xl;
+    }
+    
+    .vertex-section {
+      @apply py-12;
+    }
+  }
+}
+
+@keyframes vertexFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes vertexSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes vertexScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Three.js Canvas Styling */
+.three-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+/* D3.js Chart Styling */
+.d3-chart {
+  @apply w-full h-full;
+}
+
+.d3-chart svg {
+  @apply w-full h-full;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--vertex-background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--vertex-grey);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--vertex-orange);
+}
+
+
+/* Custom Animations for VERTEX CNC */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    text-shadow: 0 0 5px rgba(255, 107, 53, 0.5), 0 0 10px rgba(255, 107, 53, 0.5), 0 0 15px rgba(255, 107, 53, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 10px rgba(255, 107, 53, 0.8), 0 0 20px rgba(255, 107, 53, 0.8), 0 0 30px rgba(255, 107, 53, 0.8);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Enhanced Hero Title */
+.hero-title {
+  font-size: clamp(2.5rem, 8vw, 6rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+/* Neon Glow Effects */
+.neon-glow {
+  box-shadow: 
+    0 0 5px rgba(255, 107, 53, 0.5),
+    0 0 10px rgba(255, 107, 53, 0.5),
+    0 0 15px rgba(255, 107, 53, 0.5),
+    0 0 20px rgba(255, 107, 53, 0.3);
+}
+

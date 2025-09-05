@@ -1,0 +1,19 @@
+{
+  "name": "@vertex-cnc/worker",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker for VERTEX CNC API and order tracking",
+  "main": "src/worker.js",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "start": "wrangler dev",
+    "publish": "wrangler deploy --env production",
+    "test": "wrangler dev --local"
+  },
+  "devDependencies": {
+    "wrangler": "^3.78.12"
+  },
+  "keywords": ["cloudflare", "worker", "api", "vertex-cnc"],
+  "author": "VERTEX CNC",
+  "license": "MIT"
+}
