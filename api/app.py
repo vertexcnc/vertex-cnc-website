@@ -5,6 +5,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
+from email.utils import formataddr
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
@@ -23,6 +24,132 @@ from datetime import datetime, timedelta
 
 app = Flask(__name__)
 CORS(app)
+
+# Email configuration from environment
+SMTP_CONFIG = {
+    'server': os.getenv('SMTP_SERVER', 'smtp.gmail.com'),
+    'port': int(os.getenv('SMTP_PORT', '587')),
+    'username': os.getenv('SMTP_USERNAME', ''),
+    'password': os.getenv('SMTP_PASSWORD', ''),
+    'use_tls': os.getenv('SMTP_USE_TLS', 'true').lower() == 'true',
+    'from_email': os.getenv('FROM_EMAIL', 'destek@vertexcnc.tr'),
+    'support_email': os.getenv('SUPPORT_EMAIL', 'destek@vertexcnc.tr')
+}
+
+def send_real_email(to_email, subject, body, attachments=None, is_html=False):
+    """Gerçek SMTP ile e-mail gönderir"""
+    try:
+        # E-mail mesajını oluştur
+        msg = MIMEMultipart()
+        msg['From'] = formataddr(('VERTEX CNC', SMTP_CONFIG['from_email']))
+        msg['To'] = to_email
+        msg['Subject'] = subject
+        
+        # E-mail içeriğini ekle
+        content_type = 'html' if is_html else 'plain'
+        msg.attach(MIMEText(body, content_type, 'utf-8'))
+        
+        # Ekleri ekle
+        if attachments:
+            for attachment in attachments:
+                part = MIMEBase('application', 'octet-stream')
+                part.set_payload(attachment['data'])
+                encoders.encode_base64(part)
+                part.add_header(
+                    'Content-Disposition',
+                    f'attachment; filename="{attachment["filename"]}"'
+                )
+                msg.attach(part)
+        
+        # SMTP bağlantısı kur ve gönder
+        if SMTP_CONFIG['username'] and SMTP_CONFIG['password']:
+            server = smtplib.SMTP(SMTP_CONFIG['server'], SMTP_CONFIG['port'])
+            if SMTP_CONFIG['use_tls']:
+                server.starttls()
+            server.login(SMTP_CONFIG['username'], SMTP_CONFIG['password'])
+            
+            text = msg.as_string()
+            server.sendmail(SMTP_CONFIG['from_email'], to_email, text)
+            server.quit()
+            
+            print(f"✅ E-mail başarıyla gönderildi: {to_email}")
+            return True
+        else:
+            print("⚠️ SMTP konfigürasyonu eksik - e-mail gönderilmedi")
+            return False
+            
+    except Exception as e:
+        print(f"❌ E-mail gönderim hatası: {str(e)}")
+        return False
+
+def send_sendgrid_email(to_email, subject, body, attachments=None):
+    """SendGrid API ile e-mail gönderir"""
+    try:
+        import requests
+        
+        sendgrid_api_key = os.getenv('SENDGRID_API_KEY')
+        print(f"🔍 SendGrid API Key: {sendgrid_api_key[:20] + '...' if sendgrid_api_key else 'NOT FOUND'}")
+        print(f"🔍 FROM_EMAIL: {SMTP_CONFIG['from_email']}")
+        print(f"🔍 TO_EMAIL: {to_email}")
+        
+        if not sendgrid_api_key:
+            print("⚠️ SendGrid API anahtarı bulunamadı")
+            return False
+        
+        # SendGrid API payload'u hazırla
+        payload = {
+            "personalizations": [{
+                "to": [{"email": to_email}],
+                "subject": subject
+            }],
+            "from": {"email": SMTP_CONFIG['from_email'], "name": "VERTEX CNC"},
+            "content": [{"type": "text/html", "value": body}]
+        }
+        
+        print(f"🔍 SendGrid Payload: {payload}")
+        
+        # Ekleri ekle
+        if attachments:
+            payload["attachments"] = []
+            for attachment in attachments:
+                payload["attachments"].append({
+                    "content": base64.b64encode(attachment['data']).decode(),
+                    "type": "application/pdf",
+                    "filename": attachment['filename']
+                })
+        
+        response = requests.post(
+            'https://api.sendgrid.com/v3/mail/send',
+            headers={
+                'Authorization': f'Bearer {sendgrid_api_key}',
+                'Content-Type': 'application/json'
+            },
+            json=payload
+        )
+        
+        print(f"🔍 SendGrid Response Status: {response.status_code}")
+        print(f"🔍 SendGrid Response Text: {response.text}")
+        
+        if response.status_code == 202:
+            print(f"✅ SendGrid ile e-mail gönderildi: {to_email}")
+            return True
+        else:
+            print(f"❌ SendGrid hatası: {response.status_code} - {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ SendGrid e-mail gönderim hatası: {str(e)}")
+        return False
+
+def send_email_with_fallback(to_email, subject, body, attachments=None, is_html=False):
+    """Önce SendGrid, sonra SMTP ile e-mail gönderir"""
+    # İlk olarak SendGrid ile dene
+    if send_sendgrid_email(to_email, subject, body, attachments):
+        return True
+    
+    # SendGrid başarısız ise SMTP ile dene
+    print("SendGrid başarısız, SMTP ile deneniyor...")
+    return send_real_email(to_email, subject, body, attachments, is_html)
 
 # Sipariş veritabanı fonksiyonları
 def load_orders_db():
@@ -346,123 +473,185 @@ def send_quote_email():
             f.write(pdf_data)
         
         # Kişisel takip linki oluştur
-        tracking_url = f"https://vertexcnc-ktns8w.manus.space/?track={tracking_id}"
+        base_url = os.getenv('PRODUCTION_DOMAIN', 'localhost:5173')
+        if base_url.startswith('localhost'):
+            tracking_url = f"http://{base_url}/track/{tracking_id}"
+        else:
+            tracking_url = f"https://{base_url}/track/{tracking_id}"
         
         # Email configuration
         try:
-            # Create message
-            msg = MIMEMultipart()
-            msg['From'] = "noreply@vertexcnc.tr"
-            msg['To'] = data.get('email', '')  # Müşteriye gönder
-            msg['Subject'] = f"Teklif Talebiniz Alındı - {order_number}"
-            
-            # Email body with tracking link
-            body = f"""
-Sayın {data.get('contactName', '')},
-
-Teklif talebiniz başarıyla alınmıştır. 24 saat içinde detaylı teklifimizi size ileteceğiz.
-
-📋 SİPARİŞ BİLGİLERİ
-Sipariş Numarası: {order_number}
-Şirket: {data.get('companyName', '')}
-Proje: {data.get('projectDescription', '')[:100]}...
-Adet: {data.get('quantity', '')}
-Malzeme: {data.get('material', '')}
-
-🔗 KİŞİSEL TAKİP LİNKİNİZ
-Siparişinizi anlık olarak takip etmek için aşağıdaki linke tıklayın:
-{tracking_url}
-
-Bu link sadece sizin siparişinize özeldir ve güvenlidir.
-
-📎 EKLER
-- PDF Teklif Formu
-- Yüklediğiniz CAD dosyaları
-
-📞 İLETİŞİM
-Herhangi bir sorunuz için bizimle iletişime geçebilirsiniz:
-E-posta: destek@vertexcnc.tr
-Telefon: +90 212 XXX XX XX
-
-Teşekkür ederiz,
-VERTEX CNC Ekibi
-Mikron Hassasiyetinde Geleceği Şekillendiriyoruz
-
-Tarih: {datetime.now().strftime('%d.%m.%Y %H:%M')}
+            # HTML e-mail içeriği oluştur
+            customer_email_html = f"""
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Teklif Talebiniz Alındı</title>
+    <style>
+        body {{ font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f5f5f5; }}
+        .container {{ max-width: 600px; margin: 0 auto; background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }}
+        .header {{ text-align: center; border-bottom: 3px solid #ff6b35; padding-bottom: 20px; margin-bottom: 30px; }}
+        .logo {{ color: #ff6b35; font-size: 24px; font-weight: bold; }}
+        .status-badge {{ background-color: #22c55e; color: white; padding: 8px 16px; border-radius: 20px; display: inline-block; font-size: 14px; }}
+        .info-table {{ width: 100%; border-collapse: collapse; margin: 20px 0; }}
+        .info-table td {{ padding: 12px; border-bottom: 1px solid #eee; }}
+        .info-table td:first-child {{ font-weight: bold; color: #374151; width: 30%; }}
+        .tracking-box {{ background: linear-gradient(135deg, #ff6b35, #ff8c42); color: white; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 0; }}
+        .btn {{ display: inline-block; background-color: #ff6b35; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; }}
+        .footer {{ margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; color: #6b7280; font-size: 14px; }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">VERTEX CNC</div>
+            <p style="margin: 10px 0 0 0; color: #6b7280;">Mikron Hassasiyetinde Geleceği Şekillendiriyoruz</p>
+        </div>
+        
+        <h2 style="color: #1f2937;">Sayın {data.get('contactName', '')},</h2>
+        
+        <div class="status-badge">✅ Teklif talebiniz başarıyla alınmıştır</div>
+        
+        <p style="margin: 20px 0; line-height: 1.6; color: #374151;">
+            24 saat içinde detaylı teklifimizi size ileteceğiz. Proje detaylarınızı inceleyerek 
+            en uygun çözümü hazırlayacağız.
+        </p>
+        
+        <h3 style="color: #1f2937; margin-top: 30px;">📋 Sipariş Bilgileri</h3>
+        <table class="info-table">
+            <tr><td>Sipariş Numarası:</td><td><strong>{order_number}</strong></td></tr>
+            <tr><td>Şirket:</td><td>{data.get('companyName', '')}</td></tr>
+            <tr><td>Proje:</td><td>{data.get('projectDescription', '')[:100]}...</td></tr>
+            <tr><td>Adet:</td><td>{data.get('quantity', '')}</td></tr>
+            <tr><td>Malzeme:</td><td>{data.get('material', '')}</td></tr>
+            <tr><td>İstenen Teslimat:</td><td>{data.get('deadline', 'Belirtilmemiş')}</td></tr>
+        </table>
+        
+        <div class="tracking-box">
+            <h3 style="margin: 0 0 10px 0;">🔗 Kişisel Takip Linkiniz</h3>
+            <p style="margin: 0 0 15px 0; opacity: 0.9;">Siparişinizi anlık olarak takip edin</p>
+            <a href="{tracking_url}" class="btn" style="color: white;">Sipariş Durumunu Takip Et</a>
+        </div>
+        
+        <h3 style="color: #1f2937;">📎 Ekler</h3>
+        <ul style="color: #374151;">
+            <li>PDF Teklif Formu</li>
+            <li>Yüklediğiniz CAD dosyaları ({len(data.get('files', []))} adet)</li>
+        </ul>
+        
+        <div class="footer">
+            <h3 style="color: #1f2937;">📞 İletişim</h3>
+            <p>E-posta: <a href="mailto:destek@vertexcnc.tr">destek@vertexcnc.tr</a></p>
+            <p>Telefon: +90 212 XXX XX XX</p>
+            <p style="margin-top: 20px;">
+                <strong>VERTEX CNC Ekibi</strong><br>
+                <small>Tarih: {datetime.now().strftime('%d.%m.%Y %H:%M')}</small>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
             """
             
-            msg.attach(MIMEText(body, 'plain', 'utf-8'))
+            # PDF eki hazırla
+            attachments = [{{
+                'filename': f'Teklif_Talebi_{order_number}.pdf',
+                'data': pdf_data
+            }}]
             
-            # Attach PDF
-            pdf_attachment = MIMEBase('application', 'octet-stream')
-            pdf_attachment.set_payload(pdf_data)
-            encoders.encode_base64(pdf_attachment)
-            pdf_attachment.add_header(
-                'Content-Disposition',
-                f'attachment; filename="Teklif_Talebi_{order_number}.pdf"'
+            # Müşteriye e-mail gönder
+            customer_email_sent = send_email_with_fallback(
+                to_email=data.get('email', ''),
+                subject=f"Teklif Talebiniz Alındı - {order_number}",
+                body=customer_email_html,
+                attachments=attachments,
+                is_html=True
             )
-            msg.attach(pdf_attachment)
             
-            # Attach uploaded files (simulated)
-            if data.get('files'):
-                for file_info in data['files']:
-                    # Simulate file attachment
-                    file_attachment = MIMEBase('application', 'octet-stream')
-                    # Demo için boş içerik
-                    file_attachment.set_payload(b'Demo CAD file content')
-                    encoders.encode_base64(file_attachment)
-                    file_attachment.add_header(
-                        'Content-Disposition',
-                        f'attachment; filename="{file_info.get("name", "unknown_file")}"'
-                    )
-                    msg.attach(file_attachment)
-            
-            # Ayrıca destek@vertexcnc.tr adresine de bilgi gönder
-            support_msg = MIMEMultipart()
-            support_msg['From'] = "noreply@vertexcnc.tr"
-            support_msg['To'] = "destek@vertexcnc.tr"
-            support_msg['Subject'] = f"Yeni Talep - {data.get('companyName', 'Bilinmeyen Şirket')} - {order_number}"
-            
-            support_body = f"""
-Yeni bir teklif talebi alındı.
-
-Sipariş Numarası: {order_number}
-Takip ID: {tracking_id}
-Müşteri Takip Linki: {tracking_url}
-
-Şirket: {data.get('companyName', '')}
-İletişim Kişisi: {data.get('contactName', '')}
-E-posta: {data.get('email', '')}
-Telefon: {data.get('phone', '')}
-
-Proje Açıklaması: {data.get('projectDescription', '')}
-Adet: {data.get('quantity', '')}
-Malzeme: {data.get('material', '')}
-Teslimat Tarihi: {data.get('deadline', '')}
-
-Ek Notlar: {data.get('additionalNotes', '')}
-
-Detaylar ekteki PDF dosyasında bulunmaktadır.
-Yüklenen CAD dosyaları ayrı ekler halinde gönderilmiştir.
-
-VERTEX CNC Otomatik Sistem
-Tarih: {datetime.now().strftime('%d.%m.%Y %H:%M')}
+            # Destek ekibine bilgilendirme e-maili
+            support_email_html = f"""
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Yeni Teklif Talebi</title>
+    <style>
+        body {{ font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f5f5f5; }}
+        .container {{ max-width: 600px; margin: 0 auto; background-color: white; padding: 30px; border-radius: 10px; }}
+        .header {{ background-color: #1f2937; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }}
+        .urgent {{ background-color: #ef4444; color: white; padding: 10px; border-radius: 5px; text-align: center; margin-bottom: 20px; }}
+        .info-table {{ width: 100%; border-collapse: collapse; margin: 20px 0; }}
+        .info-table td {{ padding: 10px; border: 1px solid #ddd; }}
+        .info-table td:first-child {{ background-color: #f9fafb; font-weight: bold; width: 30%; }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2 style="margin: 0;">🚨 Yeni Teklif Talebi Alındı</h2>
+            <p style="margin: 10px 0 0 0;">Sipariş No: {order_number}</p>
+        </div>
+        
+        <div class="urgent">
+            ⏰ 24 saat içinde müşteriye geri dönüş yapılması gerekiyor
+        </div>
+        
+        <h3>👤 Müşteri Bilgileri</h3>
+        <table class="info-table">
+            <tr><td>Şirket:</td><td>{data.get('companyName', '')}</td></tr>
+            <tr><td>İletişim Kişisi:</td><td>{data.get('contactName', '')}</td></tr>
+            <tr><td>E-posta:</td><td><a href="mailto:{data.get('email', '')}">{data.get('email', '')}</a></td></tr>
+            <tr><td>Telefon:</td><td>{data.get('phone', '')}</td></tr>
+        </table>
+        
+        <h3>📋 Proje Detayları</h3>
+        <table class="info-table">
+            <tr><td>Proje Açıklaması:</td><td>{data.get('projectDescription', '')}</td></tr>
+            <tr><td>Adet:</td><td>{data.get('quantity', '')}</td></tr>
+            <tr><td>Malzeme:</td><td>{data.get('material', '')}</td></tr>
+            <tr><td>İstenen Teslimat:</td><td>{data.get('deadline', 'Belirtilmemiş')}</td></tr>
+            <tr><td>Ek Notlar:</td><td>{data.get('additionalNotes', 'Yok')}</td></tr>
+        </table>
+        
+        <h3>🔗 Takip Bilgileri</h3>
+        <table class="info-table">
+            <tr><td>Takip ID:</td><td>{tracking_id}</td></tr>
+            <tr><td>Müşteri Takip Linki:</td><td><a href="{tracking_url}">Takip Sayfası</a></td></tr>
+        </table>
+        
+        <h3>📎 Dosyalar</h3>
+        <p>• PDF Teklif Formu (Ekte)</p>
+        <p>• CAD Dosyaları: {len(data.get('files', []))} adet</p>
+        
+        <div style="background-color: #fef3c7; padding: 15px; border-radius: 5px; margin-top: 20px;">
+            <strong>📅 Yapılacaklar:</strong>
+            <ul>
+                <li>CAD dosyalarını analiz et</li>
+                <li>Üretim süresini hesapla</li>
+                <li>Maliyet tahmini hazırla</li>
+                <li>24 saat içinde müşteriye teklifini gönder</li>
+            </ul>
+        </div>
+        
+        <p style="margin-top: 20px; text-align: center; color: #6b7280;">
+            <small>VERTEX CNC Otomatik Sistem - {datetime.now().strftime('%d.%m.%Y %H:%M')}</small>
+        </p>
+    </div>
+</body>
+</html>
             """
             
-            support_msg.attach(MIMEText(support_body, 'plain', 'utf-8'))
-            
-            # PDF'i destek e-postasına da ekle
-            support_pdf_attachment = MIMEBase('application', 'octet-stream')
-            support_pdf_attachment.set_payload(pdf_data)
-            encoders.encode_base64(support_pdf_attachment)
-            support_pdf_attachment.add_header(
-                'Content-Disposition',
-                f'attachment; filename="Teklif_Talebi_{order_number}.pdf"'
+            # Destek ekibine e-mail gönder
+            support_email_sent = send_email_with_fallback(
+                to_email=SMTP_CONFIG['support_email'],
+                subject=f"🚨 Yeni Teklif Talebi - {data.get('companyName', 'Bilinmeyen Şirket')} - {order_number}",
+                body=support_email_html,
+                attachments=attachments,
+                is_html=True
             )
-            support_msg.attach(support_pdf_attachment)
             
-            # For production, you would configure real SMTP here
-            email_sent = True
+            email_sent = customer_email_sent and support_email_sent
             
         except Exception as e:
             print(f"E-posta gönderim hatası: {str(e)}")
@@ -503,10 +692,123 @@ Tarih: {datetime.now().strftime('%d.%m.%Y %H:%M')}
             'message': f'İşlem hatası: {str(e)}'
         }), 500
 
+@app.route('/api/test-email', methods=['POST'])
+def test_email():
+    """E-mail sistemini test eder"""
+    try:
+        data = request.get_json()
+        test_type = data.get('testType', 'system_check')
+        recipient = data.get('recipient', 'admin@vertexcnc.tr')
+        
+        # Test e-mail içeriği
+        test_subject = f"VERTEX CNC E-mail Sistem Testi - {datetime.now().strftime('%d.%m.%Y %H:%M')}"
+        test_body_html = f"""
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>E-mail Sistem Testi</title>
+    <style>
+        body {{ font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f5f5f5; }}
+        .container {{ max-width: 500px; margin: 0 auto; background-color: white; padding: 30px; border-radius: 10px; }}
+        .header {{ text-align: center; border-bottom: 3px solid #22c55e; padding-bottom: 20px; margin-bottom: 30px; }}
+        .success {{ background-color: #22c55e; color: white; padding: 15px; border-radius: 8px; text-align: center; }}
+        .info {{ background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin-top: 20px; }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2 style="color: #22c55e; margin: 0;">✅ E-mail Sistem Testi</h2>
+        </div>
+        
+        <div class="success">
+            <h3 style="margin: 0;">Test Başarılı!</h3>
+            <p style="margin: 10px 0 0 0;">E-mail sistemi düzgün çalışıyor.</p>
+        </div>
+        
+        <div class="info">
+            <h4>Test Detayları:</h4>
+            <ul>
+                <li><strong>Test Türü:</strong> {test_type}</li>
+                <li><strong>Alıcı:</strong> {recipient}</li>
+                <li><strong>Tarih:</strong> {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}</li>
+                <li><strong>Servis:</strong> SendGrid/SMTP Fallback</li>
+            </ul>
+        </div>
+        
+        <p style="text-align: center; margin-top: 30px; color: #6b7280; font-size: 14px;">
+            VERTEX CNC E-mail Sistemi<br>
+            Bu e-mail otomatik olarak gönderilmiştir.
+        </p>
+    </div>
+</body>
+</html>
+        """
+        
+        # E-mail gönder
+        success = send_email_with_fallback(
+            to_email=recipient,
+            subject=test_subject,
+            body=test_body_html,
+            is_html=True
+        )
+        
+        if success:
+            return jsonify({{
+                'success': True,
+                'message': f'Test e-maili başarıyla gönderildi: {recipient}',
+                'method': 'SendGrid/SMTP',
+                'timestamp': datetime.now().isoformat(),
+                'testType': test_type
+            }}), 200
+        else:
+            return jsonify({{
+                'success': False,
+                'message': 'E-mail gönderilemedi. Lütfen konfigürasyonu kontrol edin.',
+                'timestamp': datetime.now().isoformat(),
+                'testType': test_type
+            }}), 500
+            
+    except Exception as e:
+        return jsonify({{
+            'success': False,
+            'message': f'Test hatası: {str(e)}',
+            'timestamp': datetime.now().isoformat()
+        }}), 500
+
+@app.route('/api/email-stats', methods=['GET'])
+def get_email_stats():
+    """E-mail istatistiklerini döndürür"""
+    try:
+        # Gerçek implementasyonda veritabanından alınacak
+        # Şimdilik demo veriler
+        stats = {{
+            'todaysSent': 25,
+            'todaysFailed': 2,
+            'weeklySuccess': 96.8,
+            'lastEmailTime': datetime.now().isoformat(),
+            'sendgridStatus': 'active' if os.getenv('SENDGRID_API_KEY') else 'error',
+            'smtpFallbackStatus': 'active' if os.getenv('SMTP_USERNAME') else 'error',
+            'monthlyQuota': 40000,
+            'monthlyUsed': 1250
+        }}
+        
+        return jsonify({{
+            'success': True,
+            'stats': stats
+        }}), 200
+        
+    except Exception as e:
+        return jsonify({{
+            'success': False,
+            'message': f'İstatistikler alınamadı: {str(e)}'
+        }}), 500
+
 @app.route('/health', methods=['GET'])
 def health_check():
-    return jsonify({'status': 'healthy'}), 200
+    return jsonify({{'status': 'healthy'}}), 200
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5001)
 

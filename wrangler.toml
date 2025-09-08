@@ -17,3 +17,6 @@ bucket_name = "vertex-cnc-files"
 # Production environment variables
 [vars]
 ENVIRONMENT = "production"
+FROM_EMAIL = "destek@vertexcnc.tr"
+SUPPORT_EMAIL = "destek@vertexcnc.tr"
+NOTIFICATION_EMAIL = "destek@vertexcnc.tr"

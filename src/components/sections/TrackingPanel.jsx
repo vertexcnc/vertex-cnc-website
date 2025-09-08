@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, Clock, CheckCircle, AlertTriangle, Settings, BarChart3, Package, Truck } from 'lucide-react';
-import { trackOrder } from '../../lib/api';
 
 const TrackingPanel = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedOrder, setSelectedOrder] = useState(null);
-  const [currentStep, setCurrentStep] = useState(3);
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState(null);
+  const [currentStep, setCurrentStep] = useState(3);
+  
+  const navigate = useNavigate();
 
-  // Handle order search
+  // Handle order search - redirect to tracking page
   const handleSearch = async () => {
     if (!searchTerm.trim()) {
       setSearchError('Lütfen takip numarası girin');
@@ -20,20 +21,10 @@ const TrackingPanel = () => {
     setSearchError(null);
 
     try {
-      const result = await trackOrder(searchTerm.trim());
-      
-      if (result.success) {
-        setSelectedOrder(result.data.order);
-        // Calculate current step based on completed stages
-        const completedStages = result.data.order.stages.filter(stage => stage.status === 'completed').length;
-        setCurrentStep(completedStages);
-      } else {
-        setSearchError(result.error || 'Sipariş bulunamadı');
-        setSelectedOrder(null);
-      }
+      // Takip sayfasına yönlendir
+      navigate(`/track/${searchTerm.trim()}`);
     } catch (error) {
-      setSearchError('Arama sırasında bir hata oluştu');
-      setSelectedOrder(null);
+      setSearchError('Yönlendirme sırasında bir hata oluştu');
     } finally {
       setIsSearching(false);
     }
@@ -65,17 +56,15 @@ const TrackingPanel = () => {
   useEffect(() => {
     let interval;
     
-    // Sadece seçili sipariş yoksa animasyonu çalıştır
-    if (!selectedOrder) {
-      interval = setInterval(() => {
-        setCurrentStep(prev => (prev >= 5 ? 1 : prev + 1));
-      }, 3000);
-    }
+    // Animasyonu çalıştır
+    interval = setInterval(() => {
+      setCurrentStep(prev => (prev >= 5 ? 1 : prev + 1));
+    }, 3000);
 
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [selectedOrder]);
+  }, []);
 
   return (
     <section id="tracking-panel" className="py-20 bg-gray-900 text-white">
@@ -189,87 +178,17 @@ const TrackingPanel = () => {
           })}
         </div>
 
-        {/* Order Search Results */}
-        {selectedOrder && (
-          <div className="mb-12">
-            <div className="bg-gray-800 rounded-2xl p-8 border border-gray-700">
-              <div className="flex justify-between items-start mb-6">
-                <div>
-                  <h3 className="text-2xl font-semibold text-white mb-2">Sipariş Detayları</h3>
-                  <p className="text-gray-400">
-                    Sipariş No: <span className="text-orange-500 font-medium">{selectedOrder.orderNumber}</span>
-                  </p>
-                  <p className="text-gray-400">
-                    Takip ID: <span className="text-orange-500 font-medium">{selectedOrder.trackingId}</span>
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-lg font-semibold text-white">{selectedOrder.status}</p>
-                  <p className="text-sm text-gray-400">
-                    {new Date(selectedOrder.createdAt).toLocaleDateString('tr-TR')}
-                  </p>
-                </div>
-              </div>
-
-              {/* Customer Info */}
-              <div className="mb-6">
-                <h4 className="text-lg font-semibold text-white mb-3">Müşteri Bilgileri</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-gray-400">Ad Soyad: <span className="text-white">{selectedOrder.customerInfo.name}</span></p>
-                    <p className="text-gray-400">Şirket: <span className="text-white">{selectedOrder.customerInfo.company}</span></p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Process Steps */}
-              <div className="mb-6">
-                <h4 className="text-lg font-semibold text-white mb-4">Süreç Durumu</h4>
-                <div className="space-y-4">
-                  {selectedOrder.stages.map((stage, index) => (
-                    <div key={index} className="flex items-center space-x-4">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                        stage.status === 'completed' ? 'bg-green-500' :
-                        stage.status === 'in-progress' ? 'bg-orange-500' : 'bg-gray-600'
-                      }`}>
-                        {stage.status === 'completed' ? (
-                          <CheckCircle className="w-5 h-5 text-white" />
-                        ) : stage.status === 'in-progress' ? (
-                          <Settings className="w-5 h-5 text-white animate-spin" />
-                        ) : (
-                          <Clock className="w-5 h-5 text-white" />
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-medium text-white">{stage.stage}</p>
-                        <p className="text-sm text-gray-400">{stage.description}</p>
-                        {stage.timestamp && (
-                          <p className="text-xs text-gray-500">
-                            {new Date(stage.timestamp).toLocaleString('tr-TR')}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Demo Instructions */}
-        {!selectedOrder && !searchError && (
-          <div className="text-center py-12">
-            <Package className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-white mb-2">Sipariş Takip Sistemi</h3>
-            <p className="text-gray-400 mb-4">
-              Takip numaranızı girerek siparişinizin durumunu görüntüleyebilirsiniz.
-            </p>
-            <p className="text-sm text-gray-500">
-              Takip numarası, teklif onaylandıktan sonra e-posta adresinize gönderilir.
-            </p>
-          </div>
-        )}
+        <div className="text-center py-12">
+          <Package className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-white mb-2">Sipariş Takip Sistemi</h3>
+          <p className="text-gray-400 mb-4">
+            Takip numaranızı girerek siparişinizin durumunu görüntüleyebilirsiniz.
+          </p>
+          <p className="text-sm text-gray-500">
+            Takip numarası, teklif onaylandıktan sonra e-posta adresinize gönderilir.
+          </p>
+        </div>
 
         {/* Demo Notice */}
         <div className="mt-12 text-center">

@@ -231,7 +231,6 @@ async function handleTrackingFallback(trackingId, env, corsHeaders) {
 // Main worker
 export default {
   async fetch(request, env, ctx) {
-    const url = new URL(request.url);
     const corsHeaders = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
@@ -242,31 +241,15 @@ export default {
       return new Response(null, { headers: corsHeaders });
     }
 
-    // Ana sayfa için basit yanıt
-    if (url.pathname === '/') {
-      return new Response('VERTEX CNC API is running', { 
-        headers: { ...corsHeaders, 'Content-Type': 'text/plain' } 
-      });
+    try {
+      // Primary: Flask API'ye proxy et
+      return await proxyToFlask(request, null, env);
+      
+    } catch (error) {
+      console.error('Worker main error:', error);
+      
+      // Fallback: Cloudflare üzerinden handle et
+      return await handleFallback(request, env);
     }
-
-    // API endpoints için routing
-    if (url.pathname.startsWith('/api/')) {
-      try {
-        // Primary: Flask API'ye proxy et
-        return await proxyToFlask(request, url.pathname, env);
-        
-      } catch (error) {
-        console.error('Flask API error, using fallback:', error);
-        
-        // Fallback: Cloudflare üzerinden handle et
-        return await handleFallback(request, env);
-      }
-    }
-
-    // API dışı istekler için 404
-    return new Response('Not Found', { 
-      status: 404, 
-      headers: { ...corsHeaders, 'Content-Type': 'text/plain' } 
-    });
   }
 };

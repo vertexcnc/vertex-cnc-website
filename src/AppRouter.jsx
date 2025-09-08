@@ -8,6 +8,7 @@ import Footer from './components/layout/Footer';
 // Main Content Components
 import MainContent from './components/MainContent';
 import AdminPanel from './components/admin/AdminPanel';
+import TrackingDetails from './components/tracking/TrackingDetails';
 
 const router = createBrowserRouter([
   {
@@ -34,8 +35,7 @@ const router = createBrowserRouter([
       <>
         <Header />
         <div className="container mx-auto py-8">
-          <h1 className="text-3xl font-bold mb-8 text-center">Sipariş Takibi</h1>
-          {/* TrackingDetails bileşeni buraya gelecek */}
+          <TrackingDetails />
         </div>
         <Footer />
       </>

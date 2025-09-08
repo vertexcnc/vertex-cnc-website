@@ -1,5 +1,650 @@
 {
-  "orders": {},
+  "orders": {
+    "VTX-20250908-114013": {
+      "orderNumber": "VTX-20250908-114013",
+      "trackingId": "34912f84-8265-49dd-8dbc-a7dd0243966f",
+      "customerInfo": {
+        "companyName": "Test Şirketi A.Ş.",
+        "contactName": "Ahmet Yılmaz",
+        "email": "destek@vertexcnc.tr",
+        "phone": "+90 532 123 45 67"
+      },
+      "projectInfo": {
+        "description": "CNC ile işlenecek 50 adet alüminyum parça. Hassas ölçümler gerekiyor.",
+        "quantity": "50 adet",
+        "material": "Alüminyum 6061-T6",
+        "deadline": "2 hafta",
+        "additionalNotes": "Kalite kontrol sertifikası gerekli. ISO 9001 uyumlu üretim isteniyor."
+      },
+      "files": [
+        {
+          "name": "part_drawing.dwg",
+          "size": 2048576,
+          "type": "application/dwg"
+        }
+      ],
+      "stages": [
+        {
+          "id": "quote_received",
+          "name": "Teklif Alındı",
+          "status": "completed",
+          "date": "2025-09-08T11:40:13.675414",
+          "progress": 100
+        },
+        {
+          "id": "design_analysis",
+          "name": "Tasarım Analizi",
+          "status": "in_progress",
+          "date": null,
+          "progress": 25
+        },
+        {
+          "id": "material_prep",
+          "name": "Malzeme Hazırlık",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        },
+        {
+          "id": "cnc_machining",
+          "name": "CNC İşleme",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        },
+        {
+          "id": "quality_control",
+          "name": "Kalite Kontrol",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        },
+        {
+          "id": "delivery",
+          "name": "Teslimat",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        }
+      ],
+      "currentStage": "design_analysis",
+      "overallProgress": 17,
+      "priority": "normal",
+      "estimatedDelivery": "2025-09-23T11:40:13.675426",
+      "createdAt": "2025-09-08T11:40:13.675437",
+      "updatedAt": "2025-09-08T11:40:13.675439",
+      "status": "active"
+    },
+    "VTX-20250908-114036": {
+      "orderNumber": "VTX-20250908-114036",
+      "trackingId": "45d67b3f-fe6e-4408-a975-069144528e71",
+      "customerInfo": {
+        "companyName": "Test Şirketi A.Ş.",
+        "contactName": "Ahmet Yılmaz",
+        "email": "destek@vertexcnc.tr",
+        "phone": "+90 532 123 45 67"
+      },
+      "projectInfo": {
+        "description": "CNC ile işlenecek 50 adet alüminyum parça. Hassas ölçümler gerekiyor.",
+        "quantity": "50 adet",
+        "material": "Alüminyum 6061-T6",
+        "deadline": "2 hafta",
+        "additionalNotes": "Kalite kontrol sertifikası gerekli. ISO 9001 uyumlu üretim isteniyor."
+      },
+      "files": [
+        {
+          "name": "part_drawing.dwg",
+          "size": 2048576,
+          "type": "application/dwg"
+        }
+      ],
+      "stages": [
+        {
+          "id": "quote_received",
+          "name": "Teklif Alındı",
+          "status": "completed",
+          "date": "2025-09-08T11:40:36.306538",
+          "progress": 100
+        },
+        {
+          "id": "design_analysis",
+          "name": "Tasarım Analizi",
+          "status": "in_progress",
+          "date": null,
+          "progress": 25
+        },
+        {
+          "id": "material_prep",
+          "name": "Malzeme Hazırlık",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        },
+        {
+          "id": "cnc_machining",
+          "name": "CNC İşleme",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        },
+        {
+          "id": "quality_control",
+          "name": "Kalite Kontrol",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        },
+        {
+          "id": "delivery",
+          "name": "Teslimat",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        }
+      ],
+      "currentStage": "design_analysis",
+      "overallProgress": 17,
+      "priority": "normal",
+      "estimatedDelivery": "2025-09-23T11:40:36.306550",
+      "createdAt": "2025-09-08T11:40:36.306560",
+      "updatedAt": "2025-09-08T11:40:36.306562",
+      "status": "active"
+    },
+    "VTX-20250908-114236": {
+      "orderNumber": "VTX-20250908-114236",
+      "trackingId": "1b558332-178d-4f5c-a0bd-9af2ebc2616b",
+      "customerInfo": {
+        "companyName": "Test Şirketi A.Ş.",
+        "contactName": "Ahmet Yılmaz",
+        "email": "destek@vertexcnc.tr",
+        "phone": "+90 532 123 45 67"
+      },
+      "projectInfo": {
+        "description": "CNC ile işlenecek 50 adet alüminyum parça. Hassas ölçümler gerekiyor.",
+        "quantity": "50 adet",
+        "material": "Alüminyum 6061-T6",
+        "deadline": "2 hafta",
+        "additionalNotes": "Kalite kontrol sertifikası gerekli. ISO 9001 uyumlu üretim isteniyor."
+      },
+      "files": [
+        {
+          "name": "part_drawing.dwg",
+          "size": 2048576,
+          "type": "application/dwg"
+        }
+      ],
+      "stages": [
+        {
+          "id": "quote_received",
+          "name": "Teklif Alındı",
+          "status": "completed",
+          "date": "2025-09-08T11:42:36.691303",
+          "progress": 100
+        },
+        {
+          "id": "design_analysis",
+          "name": "Tasarım Analizi",
+          "status": "in_progress",
+          "date": null,
+          "progress": 25
+        },
+        {
+          "id": "material_prep",
+          "name": "Malzeme Hazırlık",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        },
+        {
+          "id": "cnc_machining",
+          "name": "CNC İşleme",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        },
+        {
+          "id": "quality_control",
+          "name": "Kalite Kontrol",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        },
+        {
+          "id": "delivery",
+          "name": "Teslimat",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        }
+      ],
+      "currentStage": "design_analysis",
+      "overallProgress": 17,
+      "priority": "normal",
+      "estimatedDelivery": "2025-09-23T11:42:36.691312",
+      "createdAt": "2025-09-08T11:42:36.691322",
+      "updatedAt": "2025-09-08T11:42:36.691324",
+      "status": "active"
+    },
+    "VTX-20250908-115014": {
+      "orderNumber": "VTX-20250908-115014",
+      "trackingId": "3e3957aa-631d-497c-93b1-b3d16739c62a",
+      "customerInfo": {
+        "companyName": "Test Şirketi A.Ş.",
+        "contactName": "Ahmet Yılmaz",
+        "email": "destek@vertexcnc.tr",
+        "phone": "+90 532 123 45 67"
+      },
+      "projectInfo": {
+        "description": "CNC ile işlenecek 50 adet alüminyum parça. Hassas ölçümler gerekiyor.",
+        "quantity": "50 adet",
+        "material": "Alüminyum 6061-T6",
+        "deadline": "2 hafta",
+        "additionalNotes": "Kalite kontrol sertifikası gerekli. ISO 9001 uyumlu üretim isteniyor."
+      },
+      "files": [
+        {
+          "name": "part_drawing.dwg",
+          "size": 2048576,
+          "type": "application/dwg"
+        }
+      ],
+      "stages": [
+        {
+          "id": "quote_received",
+          "name": "Teklif Alındı",
+          "status": "completed",
+          "date": "2025-09-08T11:50:14.238470",
+          "progress": 100
+        },
+        {
+          "id": "design_analysis",
+          "name": "Tasarım Analizi",
+          "status": "in_progress",
+          "date": null,
+          "progress": 25
+        },
+        {
+          "id": "material_prep",
+          "name": "Malzeme Hazırlık",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        },
+        {
+          "id": "cnc_machining",
+          "name": "CNC İşleme",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        },
+        {
+          "id": "quality_control",
+          "name": "Kalite Kontrol",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        },
+        {
+          "id": "delivery",
+          "name": "Teslimat",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        }
+      ],
+      "currentStage": "design_analysis",
+      "overallProgress": 17,
+      "priority": "normal",
+      "estimatedDelivery": "2025-09-23T11:50:14.238478",
+      "createdAt": "2025-09-08T11:50:14.238485",
+      "updatedAt": "2025-09-08T11:50:14.238486",
+      "status": "active"
+    },
+    "VTX-20250908-121453": {
+      "orderNumber": "VTX-20250908-121453",
+      "trackingId": "597de556-91d4-49ed-9caa-dabee8eb2da0",
+      "customerInfo": {
+        "companyName": "",
+        "contactName": "",
+        "email": "",
+        "phone": ""
+      },
+      "projectInfo": {
+        "description": "Test project",
+        "quantity": "",
+        "material": "",
+        "deadline": "",
+        "additionalNotes": ""
+      },
+      "files": [],
+      "stages": [
+        {
+          "id": "quote_received",
+          "name": "Teklif Alındı",
+          "status": "completed",
+          "date": "2025-09-08T12:14:53.227468",
+          "progress": 100
+        },
+        {
+          "id": "design_analysis",
+          "name": "Tasarım Analizi",
+          "status": "in_progress",
+          "date": null,
+          "progress": 25
+        },
+        {
+          "id": "material_prep",
+          "name": "Malzeme Hazırlık",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        },
+        {
+          "id": "cnc_machining",
+          "name": "CNC İşleme",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        },
+        {
+          "id": "quality_control",
+          "name": "Kalite Kontrol",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        },
+        {
+          "id": "delivery",
+          "name": "Teslimat",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        }
+      ],
+      "currentStage": "design_analysis",
+      "overallProgress": 17,
+      "priority": "normal",
+      "estimatedDelivery": "2025-09-23T12:14:53.227476",
+      "createdAt": "2025-09-08T12:14:53.227484",
+      "updatedAt": "2025-09-08T12:14:53.227485",
+      "status": "active"
+    },
+    "VTX-20250908-121726": {
+      "orderNumber": "VTX-20250908-121726",
+      "trackingId": "03510417-a6bc-4b76-9d0d-7724405c4c7a",
+      "customerInfo": {
+        "companyName": "",
+        "contactName": "",
+        "email": "realtest@vertexcnc.tr",
+        "phone": "05551234567"
+      },
+      "projectInfo": {
+        "description": "",
+        "quantity": "10",
+        "material": "Aluminum",
+        "deadline": "2025-09-15",
+        "additionalNotes": "This is a real test of the quote system"
+      },
+      "files": [],
+      "stages": [
+        {
+          "id": "quote_received",
+          "name": "Teklif Alındı",
+          "status": "completed",
+          "date": "2025-09-08T12:17:26.173552",
+          "progress": 100
+        },
+        {
+          "id": "design_analysis",
+          "name": "Tasarım Analizi",
+          "status": "in_progress",
+          "date": null,
+          "progress": 25
+        },
+        {
+          "id": "material_prep",
+          "name": "Malzeme Hazırlık",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        },
+        {
+          "id": "cnc_machining",
+          "name": "CNC İşleme",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        },
+        {
+          "id": "quality_control",
+          "name": "Kalite Kontrol",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        },
+        {
+          "id": "delivery",
+          "name": "Teslimat",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        }
+      ],
+      "currentStage": "design_analysis",
+      "overallProgress": 17,
+      "priority": "normal",
+      "estimatedDelivery": "2025-09-23T12:17:26.173564",
+      "createdAt": "2025-09-08T12:17:26.173579",
+      "updatedAt": "2025-09-08T12:17:26.173581",
+      "status": "active"
+    },
+    "VTX-20250908-121734": {
+      "orderNumber": "VTX-20250908-121734",
+      "trackingId": "e3b22425-0d9c-4627-bbb2-7bb5bfb8bf44",
+      "customerInfo": {
+        "companyName": "",
+        "contactName": "",
+        "email": "test@vertexcnc.tr",
+        "phone": "05551234567"
+      },
+      "projectInfo": {
+        "description": "",
+        "quantity": "10",
+        "material": "Aluminum",
+        "deadline": "",
+        "additionalNotes": ""
+      },
+      "files": [],
+      "stages": [
+        {
+          "id": "quote_received",
+          "name": "Teklif Alındı",
+          "status": "completed",
+          "date": "2025-09-08T12:17:34.315572",
+          "progress": 100
+        },
+        {
+          "id": "design_analysis",
+          "name": "Tasarım Analizi",
+          "status": "in_progress",
+          "date": null,
+          "progress": 25
+        },
+        {
+          "id": "material_prep",
+          "name": "Malzeme Hazırlık",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        },
+        {
+          "id": "cnc_machining",
+          "name": "CNC İşleme",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        },
+        {
+          "id": "quality_control",
+          "name": "Kalite Kontrol",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        },
+        {
+          "id": "delivery",
+          "name": "Teslimat",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        }
+      ],
+      "currentStage": "design_analysis",
+      "overallProgress": 17,
+      "priority": "normal",
+      "estimatedDelivery": "2025-09-23T12:17:34.315583",
+      "createdAt": "2025-09-08T12:17:34.315595",
+      "updatedAt": "2025-09-08T12:17:34.315597",
+      "status": "active"
+    },
+    "VTX-20250908-121834": {
+      "orderNumber": "VTX-20250908-121834",
+      "trackingId": "771c82a3-3cb9-463a-9d00-5566d36d3a48",
+      "customerInfo": {
+        "companyName": "",
+        "contactName": "",
+        "email": "test@vertexcnc.tr",
+        "phone": "05551234567"
+      },
+      "projectInfo": {
+        "description": "",
+        "quantity": "5",
+        "material": "Steel",
+        "deadline": "",
+        "additionalNotes": ""
+      },
+      "files": [],
+      "stages": [
+        {
+          "id": "quote_received",
+          "name": "Teklif Alındı",
+          "status": "completed",
+          "date": "2025-09-08T12:18:34.383372",
+          "progress": 100
+        },
+        {
+          "id": "design_analysis",
+          "name": "Tasarım Analizi",
+          "status": "in_progress",
+          "date": null,
+          "progress": 25
+        },
+        {
+          "id": "material_prep",
+          "name": "Malzeme Hazırlık",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        },
+        {
+          "id": "cnc_machining",
+          "name": "CNC İşleme",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        },
+        {
+          "id": "quality_control",
+          "name": "Kalite Kontrol",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        },
+        {
+          "id": "delivery",
+          "name": "Teslimat",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        }
+      ],
+      "currentStage": "design_analysis",
+      "overallProgress": 17,
+      "priority": "normal",
+      "estimatedDelivery": "2025-09-23T12:18:34.383383",
+      "createdAt": "2025-09-08T12:18:34.383396",
+      "updatedAt": "2025-09-08T12:18:34.383398",
+      "status": "active"
+    },
+    "VTX-20250908-122537": {
+      "orderNumber": "VTX-20250908-122537",
+      "trackingId": "5c608164-3764-4088-bb85-f534756bf155",
+      "customerInfo": {
+        "companyName": "",
+        "contactName": "",
+        "email": "test@vertexcnc.tr",
+        "phone": ""
+      },
+      "projectInfo": {
+        "description": "",
+        "quantity": "",
+        "material": "",
+        "deadline": "",
+        "additionalNotes": ""
+      },
+      "files": [],
+      "stages": [
+        {
+          "id": "quote_received",
+          "name": "Teklif Alındı",
+          "status": "completed",
+          "date": "2025-09-08T12:25:37.178313",
+          "progress": 100
+        },
+        {
+          "id": "design_analysis",
+          "name": "Tasarım Analizi",
+          "status": "in_progress",
+          "date": null,
+          "progress": 25
+        },
+        {
+          "id": "material_prep",
+          "name": "Malzeme Hazırlık",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        },
+        {
+          "id": "cnc_machining",
+          "name": "CNC İşleme",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        },
+        {
+          "id": "quality_control",
+          "name": "Kalite Kontrol",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        },
+        {
+          "id": "delivery",
+          "name": "Teslimat",
+          "status": "pending",
+          "date": null,
+          "progress": 0
+        }
+      ],
+      "currentStage": "design_analysis",
+      "overallProgress": 17,
+      "priority": "normal",
+      "estimatedDelivery": "2025-09-23T12:25:37.178325",
+      "createdAt": "2025-09-08T12:25:37.178337",
+      "updatedAt": "2025-09-08T12:25:37.178339",
+      "status": "active"
+    }
+  },
   "nextOrderId": 1
 }
-
